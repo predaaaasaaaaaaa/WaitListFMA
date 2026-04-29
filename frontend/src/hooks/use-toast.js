@@ -135,6 +135,9 @@ function toast({
 function useToast() {
   const [state, setState] = React.useState(memoryState)
 
+  // setState identity is stable across renders, so we only want to
+  // subscribe / unsubscribe once on mount/unmount.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   React.useEffect(() => {
     listeners.push(setState)
     return () => {
@@ -143,7 +146,7 @@ function useToast() {
         listeners.splice(index, 1)
       }
     };
-  }, [state])
+  }, [])
 
   return {
     ...state,

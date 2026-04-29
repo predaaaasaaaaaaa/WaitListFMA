@@ -121,9 +121,9 @@ export default function Hero() {
               { k: "20×", v: "more affordable" },
               { k: "6", v: "AI agents" },
               { k: "plain", v: "english Q&A" },
-            ].map((it, i) => (
+            ].map((it) => (
               <div
-                key={i}
+                key={it.k}
                 className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-3"
               >
                 <div className="font-mono text-base font-semibold text-white">{it.k}</div>

@@ -186,6 +186,10 @@ function EventTicker({ start }) {
       </div>
       <ul className="divide-y divide-white/5">
         {visible.map((e, i) => (
+          // NOTE: composite key `${event-time}-${slot-index}` is intentional.
+          // The visible list is a rolling stack — keying purely by event id
+          // would make React re-arrange existing DOM as the ticker advances,
+          // which would break the cascading entry animation we want.
           <motion.li
             key={`${e.t}-${i}`}
             initial={i === 0 ? { opacity: 0, y: -6 } : false}

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { joinWaitlist, getStats } from "@/lib/api";
+import { logError } from "@/lib/log";
 
 export default function WaitlistCTA() {
   const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ export default function WaitlistCTA() {
       const s = await getStats();
       setStats(s);
     } catch (err) {
-      console.error(err);
+      logError(err);
       toast.error("Couldn’t join the waitlist. Please try again.");
     } finally {
       setSubmitting(false);
