@@ -1,8 +1,17 @@
-import React, { useMemo, useRef } from "react";
+/* eslint-disable react/no-unknown-property */
+/**
+ * HeroScene - 3D animated football pitch using @react-three/fiber.
+ *
+ * IMPORTANT: This file uses React.createElement (no JSX) so that
+ * editor/visual-edits babel transforms do NOT inject DOM-only metadata
+ * props (e.g. data-line-number) onto Three.js JSX hosts. R3F would
+ * try to forward those to Three objects and crash.
+ */
+import React, { useMemo, useRef, createElement as h } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-/** Lightweight Float replacement: gentle sway + drift. */
+/* ---------- Float (gentle sway) ---------- */
 function Float({ children, speed = 1, rotationIntensity = 0.15, floatIntensity = 0.3 }) {
   const ref = useRef();
   useFrame((state) => {
@@ -12,83 +21,84 @@ function Float({ children, speed = 1, rotationIntensity = 0.15, floatIntensity =
     ref.current.rotation.y = Math.sin(t * 0.5) * rotationIntensity * 0.6;
     ref.current.position.y = Math.sin(t * 0.8) * floatIntensity * 0.05;
   });
-  return <group ref={ref}>{children}</group>;
+  return h("group", { ref }, children);
 }
 
-function ThreeLine({ points, color = "#7CFF6B", opacity = 0.7 }) {
-  const obj = useMemo(() => {
-    const g = new THREE.BufferGeometry().setFromPoints(
-      points.map((p) => new THREE.Vector3(p[0], p[1], p[2]))
-    );
-    const m = new THREE.LineBasicMaterial({
-      color,
-      transparent: true,
-      opacity,
-    });
-    return new THREE.Line(g, m);
-  }, [points, color, opacity]);
-  return <primitive object={obj} />;
-}
-
+/* ---------- Pitch ---------- */
 function Pitch() {
   const group = useRef();
   useFrame((_, delta) => {
-    if (group.current) {
-      group.current.rotation.z += delta * 0.02;
-    }
+    if (group.current) group.current.rotation.z += delta * 0.02;
   });
 
-  // Pitch lines
-  const lines = useMemo(() => {
+  const lineObjs = useMemo(() => {
     const w = 8;
-    const h = 5;
-    const lineSegments = [];
-    // outer
-    lineSegments.push([
-      [-w / 2, 0, -h / 2],
-      [w / 2, 0, -h / 2],
-      [w / 2, 0, h / 2],
-      [-w / 2, 0, h / 2],
-      [-w / 2, 0, -h / 2],
-    ]);
-    // halfway
-    lineSegments.push([
-      [0, 0, -h / 2],
-      [0, 0, h / 2],
-    ]);
-    // boxes
-    lineSegments.push([
-      [-w / 2, 0, -1.4],
-      [-w / 2 + 1.2, 0, -1.4],
-      [-w / 2 + 1.2, 0, 1.4],
-      [-w / 2, 0, 1.4],
-    ]);
-    lineSegments.push([
-      [w / 2, 0, -1.4],
-      [w / 2 - 1.2, 0, -1.4],
-      [w / 2 - 1.2, 0, 1.4],
-      [w / 2, 0, 1.4],
-    ]);
-    return lineSegments;
+    const hh = 5;
+    const segments = [
+      [
+        [-w / 2, 0, -hh / 2],
+        [w / 2, 0, -hh / 2],
+        [w / 2, 0, hh / 2],
+        [-w / 2, 0, hh / 2],
+        [-w / 2, 0, -hh / 2],
+      ],
+      [
+        [0, 0, -hh / 2],
+        [0, 0, hh / 2],
+      ],
+      [
+        [-w / 2, 0, -1.4],
+        [-w / 2 + 1.2, 0, -1.4],
+        [-w / 2 + 1.2, 0, 1.4],
+        [-w / 2, 0, 1.4],
+      ],
+      [
+        [w / 2, 0, -1.4],
+        [w / 2 - 1.2, 0, -1.4],
+        [w / 2 - 1.2, 0, 1.4],
+        [w / 2, 0, 1.4],
+      ],
+    ];
+    return segments.map((pts) => {
+      const g = new THREE.BufferGeometry().setFromPoints(
+        pts.map((p) => new THREE.Vector3(p[0], p[1], p[2]))
+      );
+      const m = new THREE.LineBasicMaterial({
+        color: 0x7cff6b,
+        transparent: true,
+        opacity: 0.65,
+      });
+      return new THREE.Line(g, m);
+    });
   }, []);
 
-  return (
-    <group ref={group} rotation={[-Math.PI / 2.6, 0, 0]} position={[0, -0.4, 0]}>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
-        <planeGeometry args={[8.6, 5.6]} />
-        <meshBasicMaterial color={"#06120c"} transparent opacity={0.85} />
-      </mesh>
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.001, 0]}>
-        <ringGeometry args={[0.95, 1.0, 64]} />
-        <meshBasicMaterial color={"#7CFF6B"} transparent opacity={0.55} />
-      </mesh>
-      {lines.map((seg, i) => (
-        <ThreeLine key={i} points={seg} color={"#7CFF6B"} opacity={0.65} />
-      ))}
-    </group>
+  // Children built with h()
+  const pitchPlane = h(
+    "mesh",
+    { rotation: [-Math.PI / 2, 0, 0], position: [0, -0.001, 0] },
+    h("planeGeometry", { args: [8.6, 5.6] }),
+    h("meshBasicMaterial", { color: "#06120c", transparent: true, opacity: 0.85 })
+  );
+  const centerCircle = h(
+    "mesh",
+    { rotation: [-Math.PI / 2, 0, 0], position: [0, 0.001, 0] },
+    h("ringGeometry", { args: [0.95, 1.0, 64] }),
+    h("meshBasicMaterial", { color: "#7CFF6B", transparent: true, opacity: 0.55 })
+  );
+  const linePrims = lineObjs.map((obj, i) =>
+    h("primitive", { key: `ln-${i}`, object: obj })
+  );
+
+  return h(
+    "group",
+    { ref: group, rotation: [-Math.PI / 2.6, 0, 0], position: [0, -0.4, 0] },
+    pitchPlane,
+    centerCircle,
+    ...linePrims
   );
 }
 
+/* ---------- Player dots ---------- */
 function PlayerDots({ team = "a", count = 11 }) {
   const groupRef = useRef();
   const targets = useRef([]);
@@ -133,18 +143,22 @@ function PlayerDots({ team = "a", count = 11 }) {
   });
 
   const color = team === "a" ? "#7CFF6B" : "#4CC9FF";
-  return (
-    <group ref={groupRef} rotation={[-Math.PI / 2.6, 0, 0]} position={[0, -0.4, 0]}>
-      {positions.current.map((pos, i) => (
-        <mesh key={i} position={pos}>
-          <sphereGeometry args={[0.08, 18, 18]} />
-          <meshBasicMaterial color={color} />
-        </mesh>
-      ))}
-    </group>
+  const dots = positions.current.map((pos, i) =>
+    h(
+      "mesh",
+      { key: `${team}-${i}`, position: pos },
+      h("sphereGeometry", { args: [0.08, 18, 18] }),
+      h("meshBasicMaterial", { color })
+    )
+  );
+  return h(
+    "group",
+    { ref: groupRef, rotation: [-Math.PI / 2.6, 0, 0], position: [0, -0.4, 0] },
+    ...dots
   );
 }
 
+/* ---------- Ball ---------- */
 function Ball() {
   const ballRef = useRef();
   const t = useRef(0);
@@ -157,19 +171,25 @@ function Ball() {
       ballRef.current.position.y = 0.1 + Math.sin(t.current * 1.2) * 0.05;
     }
   });
-  return (
-    <group rotation={[-Math.PI / 2.6, 0, 0]} position={[0, -0.4, 0]}>
-      <mesh ref={ballRef}>
-        <sphereGeometry args={[0.11, 24, 24]} />
-        <meshStandardMaterial color={"#ffffff"} emissive={"#ffffff"} emissiveIntensity={0.4} />
-      </mesh>
-    </group>
+  return h(
+    "group",
+    { rotation: [-Math.PI / 2.6, 0, 0], position: [0, -0.4, 0] },
+    h(
+      "mesh",
+      { ref: ballRef },
+      h("sphereGeometry", { args: [0.11, 24, 24] }),
+      h("meshStandardMaterial", {
+        color: "#ffffff",
+        emissive: "#ffffff",
+        emissiveIntensity: 0.4,
+      })
+    )
   );
 }
 
+/* ---------- Particles ---------- */
 function Particles({ count = 70 }) {
   const ref = useRef();
-
   const obj = useMemo(() => {
     const arr = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -188,13 +208,30 @@ function Particles({ count = 70 }) {
     });
     return new THREE.Points(geom, mat);
   }, [count]);
-
   useFrame((_, delta) => {
     if (!ref.current) return;
     ref.current.rotation.y += delta * 0.04;
   });
+  return h("primitive", { ref, object: obj });
+}
 
-  return <primitive ref={ref} object={obj} />;
+/* ---------- Scene root ---------- */
+function SceneContent() {
+  return [
+    h("color", { key: "bg", attach: "background", args: ["#050810"] }),
+    h("fog", { key: "fog", attach: "fog", args: ["#050810", 6, 14] }),
+    h("ambientLight", { key: "amb", intensity: 0.65 }),
+    h("directionalLight", { key: "dir", position: [3, 6, 4], intensity: 0.6 }),
+    h(
+      Float,
+      { key: "float", speed: 1.2, rotationIntensity: 0.15, floatIntensity: 0.3 },
+      h(Pitch, { key: "pitch" }),
+      h(PlayerDots, { key: "team-a", team: "a", count: 11 }),
+      h(PlayerDots, { key: "team-b", team: "b", count: 11 }),
+      h(Ball, { key: "ball" })
+    ),
+    h(Particles, { key: "particles", count: 70 }),
+  ];
 }
 
 export default function HeroScene() {
@@ -205,17 +242,7 @@ export default function HeroScene() {
       gl={{ antialias: true, alpha: true }}
       style={{ background: "transparent" }}
     >
-      <color attach="background" args={["#050810"]} />
-      <fog attach="fog" args={["#050810", 6, 14]} />
-      <ambientLight intensity={0.65} />
-      <directionalLight position={[3, 6, 4]} intensity={0.6} />
-      <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.3}>
-        <Pitch />
-        <PlayerDots team="a" count={11} />
-        <PlayerDots team="b" count={11} />
-        <Ball />
-      </Float>
-      <Particles count={70} />
+      <SceneContent />
     </Canvas>
   );
 }
