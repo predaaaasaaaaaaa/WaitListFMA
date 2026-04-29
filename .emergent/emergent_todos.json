@@ -1,27 +1,27 @@
 [
   {
     "content": "Phase 2: Get design guidelines from design_agent (premium AI x football, 3D)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Install required dependencies (@react-three/fiber, @react-three/drei, framer-motion)",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Phase 2: Build backend (feedback + waitlist + stats endpoints, MongoDB models)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: Build frontend hero with 3D football pitch scene",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: Build all landing sections (Problem, How it works, Interactive Preview, 6 Agents, Features, Comparison, Roadmap)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: Build FAQ accordion and 6-question Feedback Survey",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 2: Wire feedback + waitlist to backend, polish responsiveness, all user stories covered",
