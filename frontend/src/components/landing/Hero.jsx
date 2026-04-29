@@ -42,7 +42,7 @@ export default function Hero() {
       className="relative isolate overflow-hidden"
     >
       {/* Background layers */}
-      <div className="absolute inset-0 hero-glow" aria-hidden />
+      <div className="pointer-events-none absolute inset-0 hero-glow" aria-hidden />
       <div className="pointer-events-none absolute inset-0 tactical-grid opacity-50" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background" aria-hidden />
 
