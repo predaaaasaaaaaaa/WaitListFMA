@@ -1,5 +1,5 @@
 import React from "react";
-import { Activity, Github } from "lucide-react";
+import { Activity, Mail } from "lucide-react";
 
 const LINKS = [
   { label: "How it works", href: "#how-it-works" },
@@ -43,21 +43,21 @@ export default function Footer() {
             PREDA
           </a>
           <p className="mt-4 max-w-md text-sm leading-relaxed text-white/55">
-            AI match intelligence for clubs and academies. Pro-grade insights, plain-English
-            answers, accessible pricing.
+            AI match intelligence for clubs and academies. Pro-grade insights,
+            plain-English answers, accessible pricing.
           </p>
           <div className="mt-6 flex items-center gap-3">
             <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-              aria-label="GitHub"
+              href="#feedback"
+              onClick={(e) => handleAnchor(e, "#feedback")}
+              className="inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 text-xs font-medium text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+              data-testid="footer-contact-button"
             >
-              <Github className="h-4 w-4" />
+              <Mail className="h-3.5 w-3.5" />
+              Get in touch
             </a>
             <span className="font-mono text-[10px] uppercase tracking-widest text-white/40">
-              MIT · open source
+              early access · invite only
             </span>
           </div>
         </div>

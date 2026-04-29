@@ -19,23 +19,31 @@ node_modules/
 # Testing
 /coverage
 
-# Next.js
-/.next/
-/out/
-next-env.d.ts
-*.tsbuildinfo
-
 # Production builds
 /build
 dist/
 dist
 
-# Environment files (comprehensive coverage)
-
+# ====================
+# SECRETS / ENV FILES
+# ====================
+# NEVER commit local env files. Use .env.example for templates.
+.env
+.env.*
+!.env.example
+!.env.*.example
+backend/.env
+frontend/.env
+backend/.env.*
+frontend/.env.*
+!backend/.env.example
+!frontend/.env.example
 *token.json*
 *credentials.json*
+*secret*
+*.pem
 
-# Logs and debug files
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -44,40 +52,51 @@ dump.rdb
 
 # System files
 .DS_Store
-*.pem
+Thumbs.db
 
 # Python
 __pycache__/
-*pyc*
+*.pyc
+*.pyo
 venv/
 .venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Development tools
-chainlit.md
-.chainlit
-.ipynb_checkpoints/
-.ac
+# Test reports
+/test_reports/
+/tests/__pycache__/
+backend_test.py
 
-# Deployment
-.vercel
+# Memory / agent runtime files (do not commit)
+/memory/
+/.emergent/
 
-# Data and databases
-agenthub/agents/youtube/db
+# Build caches
+.cache/
+*.pack
 
 # Archive files and large assets
 **/*.zip
 **/*.tar.gz
 **/*.tar
 **/*.tgz
-*.pack
 *.deb
 *.dylib
 
-# Build caches
-.cache/
-
-memory/test_credentials.md
-
 # Mobile development
-android-sdk/frontend/node_modules/.cache/default-development/0.pack
+android-sdk/
+frontend/node_modules/.cache/
+
+# Deployment artefacts
+.vercel
+.wrangler/
+wrangler.toml.local
+
+# OS / scratch
+*.swp
+*.swo
+.tmp/
 frontend/node_modules/.cache/default-development/0.pack
